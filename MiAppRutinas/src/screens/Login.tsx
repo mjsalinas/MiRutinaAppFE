@@ -4,12 +4,13 @@ import CustomInput from "../components/CustomInput";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { i18n, useLanguage } from "../contexts/LanguageContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function Login ({navigation}: any) {
-const [email, setEmail] = useState('');
-const [password, setPassword] = useState('');
-
-const {login, isAllowed} = useAuth();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const {login, isAllowed} = useAuth();
+    const { theme } = useTheme();
 
 const handleOnChangeEmail = (email: string) => {
     setEmail(email);
@@ -35,8 +36,8 @@ try {
 };
 
 return(
-        <View style={styles.container}>
-        <View style={styles.backgroundCard}>
+        <View style={[styles.container, { backgroundColor: theme.colors.background }] }>
+            <View style={[styles.backgroundCard, { backgroundColor: theme.colors.card }] }>
             <CustomInput 
             type="email" 
             value={email} 
@@ -70,19 +71,17 @@ return(
 
 
 const styles = StyleSheet.create({
-     container: {
+    container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#1E1E2C', // Fondo oscuro moderno
         padding: 20,
     },
     backgroundCard: {
-        backgroundColor: '#FFFFFF', // Fondo blanco para contraste
-        borderRadius: 15, // Bordes más redondeados
+        borderRadius: 15,
         padding: 30,
         width: '85%',
-        shadowColor: '#000', // Sombra para dar profundidad
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 5,

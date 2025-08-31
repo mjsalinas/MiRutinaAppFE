@@ -2,6 +2,7 @@ import { useState } from "react";
 import { KeyboardTypeOptions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { i18n } from "../contexts/LanguageContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 type Props = {
     value: string;
@@ -12,6 +13,7 @@ type Props = {
 }
 
 export default function CustomInput({ value, title, type = "text", onChange, required }: Props) {
+    const { theme } = useTheme();
     const [isSecureText, setIsSecureText] = useState(type === 'password');
     const [isPasswordVisible, setIsPasswordVisible] = useState (false);
 
@@ -36,19 +38,18 @@ export default function CustomInput({ value, title, type = "text", onChange, req
     }
     const error = getError();
     return (
-        <View >
-            <View style={[
-                styles.inputContainer,
-                error && styles.inputError]}>
+            <View>
+                <View style={[styles.inputContainer, { backgroundColor: theme.colors.card }, error ? styles.inputError : undefined]}>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, { color: theme.colors.text } ]}
                     placeholder={title}
+                    placeholderTextColor={theme.colors.text + '99'}
                     value={value}
                     onChangeText={onChange}
                     secureTextEntry={isSecureText}
                     keyboardType={keyboardType}
                 />
-                 {isPasswordField && (
+                {isPasswordField && (
                     <TouchableOpacity 
                         onPress={() => {
                             setIsPasswordVisible(!isPasswordVisible);
@@ -56,11 +57,13 @@ export default function CustomInput({ value, title, type = "text", onChange, req
                         }}>
                         <Icon 
                             name={isPasswordVisible ? 'visibility-off' : 'visibility'}
-                            size={20} />
+                            size={20}
+                            color={theme.colors.text}
+                        />
                     </TouchableOpacity>
                 )}
             </View>
-            <Text>{error} </Text>
+            <Text style={[styles.error, { color: 'red' }]}>{error} </Text>
         </View>
 
     );
