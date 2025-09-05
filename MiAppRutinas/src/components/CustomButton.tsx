@@ -1,23 +1,25 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { useTheme } from "../contexts/ThemeContext";
 
 type Props = {
     title: string;
     onPress: () => void;
     variant?: 'primary' | 'secondary' | 'tertiary';
 }
-// componente con props
+
 export default function CustomButton ({title, onPress, variant='primary'}: Props){
-    const styles = getStyles(variant);
+    const { isDark } = useTheme();
+    const styles = getStyles(variant, isDark);
 
     return( 
-    <TouchableOpacity  style={styles.button} onPress={onPress} >
-        <Text style={styles.text}>{title}</Text>
-    </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={onPress} >
+            <Text style={styles.text}>{title}</Text>
+        </TouchableOpacity>
     );
 }
-// funcion con parametros para generar estilos
-const getStyles = (variant: 'primary' | 'secondary' | 'tertiary') => {
+
+const getStyles = (variant: 'primary' | 'secondary' | 'tertiary', isDark: boolean) => {
     return StyleSheet.create({
        button: {
         height: 45,
@@ -29,10 +31,8 @@ const getStyles = (variant: 'primary' | 'secondary' | 'tertiary') => {
           variant === 'secondary' ? '#65659c' : 'transparent',
        }, 
        text: {
-        color: variant === "primary" || variant === "secondary" ? 
-        '#ededf7' : '#010117',
+        color: variant === 'tertiary' ? (isDark ? '#FFFFFF' : '#010117') : '#ededf7',
         fontWeight: 'bold',
        },
-
     })
 }

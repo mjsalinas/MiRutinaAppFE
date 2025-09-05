@@ -6,6 +6,8 @@ es: {
     invalidEmail: 'Correo inválido',
     passwordMustBeStronger: 'La contraseña debe ser más fuerte',
     welcomeText: 'estas en pantalla de Home',
+    email: 'Correo',
+    password: 'Contraseña'
   },
 en: {
     signIn: 'Sign in',
@@ -13,7 +15,9 @@ en: {
     forgotPassword: 'Forgot my password',
     invalidEmail: 'Invalid email',
     passwordMustBeStronger: 'Password must be stronger',
-    welcomeText: "you're on home screen"
+    welcomeText: "you're on home screen",
+    email: 'Email',
+    password: 'Password'
   },
 fr:{
     signIn: 'Se connecter',
@@ -21,5 +25,7 @@ fr:{
     forgotPassword: "J'ai oublié mon mot de passe",
     invalidEmail: 'Adresse e-mail invalide',
     passwordMustBeStronger: 'Le mot de passe doit être plus fort',
-    welcomeText: "vous etez dans l'ecran 'home'"
+    welcomeText: "vous etez dans l'ecran 'home'",
+    email: 'Courriel',
+    password: 'Mot de passe'
   }}
