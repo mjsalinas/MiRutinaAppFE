@@ -2,8 +2,9 @@ import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { useAuth } from "../contexts/AuthContext";
 import { i18n, useLanguage } from "../contexts/LanguageContext";
 import CustomButton from "../components/CustomButton";
-import { translations } from "../translations/i18n";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { ThemeContext } from "../contexts/ThemeContext";
+import React, { useContext } from "react";
 
 type Book = {
     id: string;
@@ -16,6 +17,7 @@ type Book = {
 export default function Home() {
     const { user } = useAuth();
     const { changeLanguage, language } = useLanguage();
+    const { theme, toggleTheme } = useContext(ThemeContext);
 
     const books: Book[] = [
         {
@@ -27,7 +29,6 @@ export default function Home() {
         },
         {
             id: "200",
-
             image_url: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1612238791i/56916837.jpg",
             title: "To Kill a Mockingbird",
             author: "Harper Lee",
@@ -35,7 +36,6 @@ export default function Home() {
         },
         {
             id: "300",
-
             image_url: "https://example.com/images/the-pragmatic-programmer.jpg",
             title: "The Pragmatic Programmer",
             author: "Andrew Hunt y David Thomas",
@@ -51,38 +51,37 @@ export default function Home() {
     ];
 
     const renderItem = ({ item }: { item: Book }) =>
-    (<TouchableOpacity style={styles.card}>
-        <Image source={{ uri: item.image_url }} style={styles.image} />
-        <View style={styles.info}>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.author}>{item.author}</Text>
-        </View>
-    </TouchableOpacity>)
-
+    (
+        <TouchableOpacity style={[styles.card, { backgroundColor: theme === "light" ? "pink" : "#333" }]}>
+            <Image source={{ uri: item.image_url }} style={styles.image} />
+            <View style={styles.info}>
+                <Text style={[styles.title, { color: theme === "light" ? "#000" : "#fff" }]}>{item.title}</Text>
+                <Text style={[styles.author, { color: theme === "light" ? "#444" : "#ccc" }]}>{item.author}</Text>
+            </View>
+        </TouchableOpacity>
+    )
 
     return (
-        <View>
-            <Text style={{ fontWeight: "bold", color: "black", fontSize: 18 }}>
-                Hola {user?.email}, {i18n.t('welcomeText')}</Text>
-            <Text>Tu idioma actual de traduccion: {language}</Text>
+        <View style={{ flex: 1, backgroundColor: theme === "light" ? "#fff" : "#000", padding: 16 }}>
+            <Text style={{ fontWeight: "bold", color: theme === "light" ? "#000" : "#fff", fontSize: 18 }}>
+                Hola {user?.email}, {i18n.t('welcomeText')}
+            </Text>
+            <Text style={{ color: theme === "light" ? "#000" : "#fff", marginBottom: 10 }}>
+                Tu idioma actual de traduccion: {language}
+            </Text>
 
             <View style={styles.translationsContainer}>
-                <CustomButton title={"FR"}
-                    onPress={() => changeLanguage("fr")}
-                    variant={'primary'} />
-                <CustomButton title={"EN"}
-                    onPress={() => changeLanguage("en")}
-                    variant={'primary'} />
-                <CustomButton title={"ES"}
-                    onPress={() => changeLanguage("es")}
-                    variant={'primary'} />
+                <CustomButton title={"FR"} onPress={() => changeLanguage("fr")} variant={'primary'} />
+                <CustomButton title={"EN"} onPress={() => changeLanguage("en")} variant={'primary'} />
+                <CustomButton title={"ES"} onPress={() => changeLanguage("es")} variant={'primary'} />
+                <CustomButton title={theme === "light" ? "Modo Oscuro" : "Modo Claro"} onPress={toggleTheme} variant={'secondary'} />
             </View>
 
             <FlatList
                 data={books}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={renderItem}
-                contentContainerStyle={styles.list}
+                contentContainerStyle={{ paddingBottom: 50 }}
             />
         </View>
     );
@@ -90,24 +89,20 @@ export default function Home() {
 
 const styles = StyleSheet.create({
     translationsContainer: {
-        flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-around',
-        height: 200,
+        height: 50,
+        marginVertical: 10,
     },
-    list: {
-        paddingHorizontal: 16
-    },
-    card: {flexDirection:'row',
+    card: {
+        flexDirection: 'row',
         borderRadius: 8,
         marginVertical: 8,
         padding: 10,
-        backgroundColor: 'pink'
-
     },
-    info: {flexShrink: 1},
-    title: {fontWeight:'bold', fontSize: 16},
-    author: {color:'dark-grey'},
+    info: { flexShrink: 1 },
+    title: { fontWeight: 'bold', fontSize: 16 },
+    author: { color: "#444" },
     image: {
         width: 80,
         height: 120,
