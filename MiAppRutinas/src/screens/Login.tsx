@@ -1,4 +1,5 @@
-import { Alert, Button, StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
+import { useTheme } from "../contexts/ThemeContext";
 import CustomButton from "../components/CustomButton";
 import CustomInput from "../components/CustomInput";
 import { useState } from "react";
@@ -6,6 +7,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { i18n, useLanguage } from "../contexts/LanguageContext";
 
 export default function Login ({navigation}: any) {
+    const { isDark } = useTheme();
 const [email, setEmail] = useState('');
 const [password, setPassword] = useState('');
 
@@ -34,16 +36,16 @@ try {
 }
 };
 
-return(
-        <View style={styles.container}>
-        <View style={styles.backgroundCard}>
-            <CustomInput 
+    return(
+        <View style={[styles.container, { backgroundColor: isDark ? '#1E1E2C' : '#f2f2f2' }]}> 
+            <View style={[styles.backgroundCard, { backgroundColor: isDark ? '#232336' : '#fff' }]}> 
+    <CustomInput 
             type="email" 
             value={email} 
             title={"Correo"} 
             onChange={handleOnChangeEmail}            
             />
-            <CustomInput type="password" 
+    <CustomInput type="password" 
             value={password} 
             title={"Contraseña"} 
             onChange={handleOnChangePassword}/>
@@ -52,39 +54,37 @@ return(
             {/* <CustomButton title="Iniciar Sesion" */}
 
             {/* //boton con traduccion automatica */}
-             <CustomButton title={i18n.t('signIn')}
-            onPress={handleLogin}/>
+                <CustomButton title={i18n.t('signIn')}
+                    onPress={handleLogin}/>
 
-            <CustomButton title= {i18n.t('signUp')}
-            onPress={()=>{}} 
-            variant={'secondary'}/>
+                <CustomButton title= {i18n.t('signUp')}
+                    onPress={()=>{}} 
+                    variant={'secondary'}/>
 
-            <CustomButton title={i18n.t('forgotPassword')}
-            onPress={()=>{}} 
-            variant={'tertiary'}/>
+                <CustomButton title={i18n.t('forgotPassword')}
+                    onPress={()=>{}} 
+                    variant={'tertiary'}/>
 
-        </View>
+            </View>
         </View>
     );
 }
 
 
 const styles = StyleSheet.create({
-     container: {
+    container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#1E1E2C', // Fondo oscuro moderno
         padding: 20,
     },
     backgroundCard: {
-        backgroundColor: '#FFFFFF', // Fondo blanco para contraste
-        borderRadius: 15, // Bordes más redondeados
+        borderRadius: 15,
         padding: 30,
         width: '85%',
-        shadowColor: '#000', // Sombra para dar profundidad
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 5,
     },
-})
+});

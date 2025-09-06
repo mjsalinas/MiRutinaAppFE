@@ -1,4 +1,5 @@
-import { FlatList, Image, StyleSheet, Text, View } from "react-native";
+import { FlatList, Image, StyleSheet, Text, View, Switch } from "react-native";
+import { useTheme, ThemeType } from "../contexts/ThemeContext";
 import { useAuth } from "../contexts/AuthContext";
 import { i18n, useLanguage } from "../contexts/LanguageContext";
 import CustomButton from "../components/CustomButton";
@@ -16,6 +17,7 @@ type Book = {
 export default function Home() {
     const { user } = useAuth();
     const { changeLanguage, language } = useLanguage();
+    const { theme, setTheme, isDark } = useTheme();
 
     const books: Book[] = [
         {
@@ -51,20 +53,28 @@ export default function Home() {
     ];
 
     const renderItem = ({ item }: { item: Book }) =>
-    (<TouchableOpacity style={styles.card}>
-        <Image source={{ uri: item.image_url }} style={styles.image} />
-        <View style={styles.info}>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.author}>{item.author}</Text>
-        </View>
-    </TouchableOpacity>)
+        (<TouchableOpacity style={styles.card}>
+            <Image source={{ uri: item.image_url }} style={styles.image} />
+            <View style={styles.info}>
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.author}>{item.author}</Text>
+            </View>
+        </TouchableOpacity>);
 
 
     return (
-        <View>
-            <Text style={{ fontWeight: "bold", color: "black", fontSize: 18 }}>
+        <View style={[styles.container, { backgroundColor: isDark ? '#181824' : '#fff', flex: 1 }]}> 
+            <Text style={{ fontWeight: "bold", color: isDark ? '#fff' : '#181824', fontSize: 18 }}>
                 Hola {user?.email}, {i18n.t('welcomeText')}</Text>
-            <Text>Tu idioma actual de traduccion: {language}</Text>
+            <Text style={{ color: isDark ? '#ccc' : '#222' }}>Tu idioma actual de traduccion: {language}</Text>
+
+            {/* Switch de tema */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10 }}>
+                <Text style={{ color: isDark ? '#fff' : '#181824', marginRight: 8 }}>Tema:</Text>
+                <CustomButton title="Claro" onPress={() => setTheme('light')} variant={theme === 'light' ? 'primary' : 'secondary'} />
+                <CustomButton title="Oscuro" onPress={() => setTheme('dark')} variant={theme === 'dark' ? 'primary' : 'secondary'} />
+                <CustomButton title="Auto" onPress={() => setTheme('auto')} variant={theme === 'auto' ? 'primary' : 'secondary'} />
+            </View>
 
             <View style={styles.translationsContainer}>
                 <CustomButton title={"FR"}
@@ -89,27 +99,30 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-    translationsContainer: {
+    container: {
         flex: 1,
+        padding: 16,
+    },
+    translationsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        height: 200,
+        marginVertical: 16,
     },
     list: {
         paddingHorizontal: 16
     },
-    card: {flexDirection:'row',
+    card: {
+        flexDirection: 'row',
         borderRadius: 8,
         marginVertical: 8,
         padding: 10,
-        backgroundColor: 'pink'
-
+        backgroundColor: '#f8bbd0',
     },
-    info: {flexShrink: 1},
-    title: {fontWeight:'bold', fontSize: 16},
-    author: {color:'dark-grey'},
+    info: { flexShrink: 1 },
+    title: { fontWeight: 'bold', fontSize: 16 },
+    author: { color: 'dark-grey' },
     image: {
         width: 80,
         height: 120,
     }
-})
+});
