@@ -1,90 +1,84 @@
-import { Alert, Button, StyleSheet, Text, View } from "react-native";
-import CustomButton from "../components/CustomButton";
-import CustomInput from "../components/CustomInput";
-import { useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
-import { i18n, useLanguage } from "../contexts/LanguageContext";
+import {Alert, StyleSheet, View} from 'react-native';
+import CustomButton from '../components/CustomButton';
+import CustomInput from '../components/CustomInput';
+import {useState} from 'react';
+import {useAuth} from '../contexts/AuthContext';
+import {i18n} from '../contexts/LanguageContext';
+import {useTheme} from '../contexts/ThemeContext';
 
-export default function Login ({navigation}: any) {
-const [email, setEmail] = useState('');
-const [password, setPassword] = useState('');
+export default function Login({navigation}: any) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const {login} = useAuth();
+  const {isDark} = useTheme();
 
-const {login, isAllowed} = useAuth();
+  const handleOnChangeEmail = (value: string) => setEmail(value);
+  const handleOnChangePassword = (value: string) => setPassword(value);
 
-const handleOnChangeEmail = (email: string) => {
-    setEmail(email);
-}
-const handleOnChangePassword = (pwd: string) => {
-    setPassword(pwd);
-} 
-const handleLogin = () => {
-try {
-    if (!email || !password){
+  const handleLogin = () => {
+    try {
+      if (!email || !password) {
         Alert.alert('Error', 'Por favor complete todos los campos');
         return;
-    }
-    //navegacion de pantallas con envio de parametros de ruta
-    login(email);
-    navigation.navigate('HomeScreen', {correo: email});
-    
-    // navegacion de pantallas sin envio de parametros
-    // navigation.navigate('HomeScreen');
-} catch (error: any){
+      }
+      login(email);
+      navigation.navigate('HomeScreen', {correo: email});
+    } catch (error: any) {}
+  };
 
+  return (
+    <View
+      style={[
+        styles.container,
+        {backgroundColor: isDark ? '#1E1E2C' : '#fff'},
+      ]}>
+      <View
+        style={[
+          styles.backgroundCard,
+          {backgroundColor: isDark ? '#222' : '#fff'},
+        ]}>
+        <CustomInput
+          type="email"
+          value={email}
+          title={'Correo'}
+          onChange={handleOnChangeEmail}
+        />
+        <CustomInput
+          type="password"
+          value={password}
+          title={'Contraseña'}
+          onChange={handleOnChangePassword}
+        />
+        <CustomButton title={i18n.t('signIn')} onPress={handleLogin} />
+        <CustomButton
+          title={i18n.t('signUp')}
+          onPress={() => {}}
+          variant={'secondary'}
+        />
+        <CustomButton
+          title={i18n.t('forgotPassword')}
+          onPress={() => {}}
+          variant={'tertiary'}
+        />
+      </View>
+    </View>
+  );
 }
-};
-
-return(
-        <View style={styles.container}>
-        <View style={styles.backgroundCard}>
-            <CustomInput 
-            type="email" 
-            value={email} 
-            title={"Correo"} 
-            onChange={handleOnChangeEmail}            
-            />
-            <CustomInput type="password" 
-            value={password} 
-            title={"Contraseña"} 
-            onChange={handleOnChangePassword}/>
-            
-            {/* //boton sin traduccion */}
-            {/* <CustomButton title="Iniciar Sesion" */}
-
-            {/* //boton con traduccion automatica */}
-             <CustomButton title={i18n.t('signIn')}
-            onPress={handleLogin}/>
-
-            <CustomButton title= {i18n.t('signUp')}
-            onPress={()=>{}} 
-            variant={'secondary'}/>
-
-            <CustomButton title={i18n.t('forgotPassword')}
-            onPress={()=>{}} 
-            variant={'tertiary'}/>
-
-        </View>
-        </View>
-    );
-}
-
 
 const styles = StyleSheet.create({
-     container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#1E1E2C', // Fondo oscuro moderno
-        padding: 20,
-    },
-    backgroundCard: {
-        backgroundColor: '#FFFFFF', // Fondo blanco para contraste
-        borderRadius: 15, // Bordes más redondeados
-        padding: 30,
-        width: '85%',
-        shadowColor: '#000', // Sombra para dar profundidad
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 5,
-    },
-})
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  backgroundCard: {
+    borderRadius: 15,
+    padding: 30,
+    width: '85%',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+});
