@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "490915201668",
+    "project_id": "miapprutinas-2df9b",
+    "storage_bucket": "miapprutinas-2df9b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:490915201668:android:cba20597a82af8ee0638d1",
+        "android_client_info": {
+          "package_name": "com.miapprutinas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgOE1UD8ab0DzOxZMl5q9nz_0adMxiV8g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
