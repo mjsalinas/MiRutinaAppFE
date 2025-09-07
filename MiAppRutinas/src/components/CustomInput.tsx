@@ -2,6 +2,7 @@ import { useState } from "react";
 import { KeyboardTypeOptions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { i18n } from "../contexts/LanguageContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 type Props = {
     value: string;
@@ -14,6 +15,7 @@ type Props = {
 export default function CustomInput({ value, title, type = "text", onChange, required }: Props) {
     const [isSecureText, setIsSecureText] = useState(type === 'password');
     const [isPasswordVisible, setIsPasswordVisible] = useState (false);
+    const { colors } = useTheme();
 
     const isPasswordField = type==="password";
     const keyboardType: KeyboardTypeOptions = 
@@ -22,33 +24,32 @@ export default function CustomInput({ value, title, type = "text", onChange, req
                 type === 'numeric' ? 'numeric' :
                     'default';
 
-
     const getError = () => {
-        // validacion de campos obligatorios
         if (required && !value)
             return "El campo es obligatorio";
-        // evaluar si el correo tiene @
         if (type === "email" && !value.includes("@"))
             return i18n.t('invalidEmail');
-        // evaluar longitud de contraseña 
         if (type == "password" && value.length < 4)
             return i18n.t('passwordMustBeStronger');
     }
     const error = getError();
+
     return (
-        <View >
+        <View>
             <View style={[
                 styles.inputContainer,
-                error && styles.inputError]}>
+                { backgroundColor: colors.inputBackground, borderColor: error ? "red" : colors.border }
+            ]}>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, { color: colors.inputText }]}
                     placeholder={title}
+                    placeholderTextColor={colors.border}
                     value={value}
                     onChangeText={onChange}
                     secureTextEntry={isSecureText}
                     keyboardType={keyboardType}
                 />
-                 {isPasswordField && (
+                {isPasswordField && (
                     <TouchableOpacity 
                         onPress={() => {
                             setIsPasswordVisible(!isPasswordVisible);
@@ -56,37 +57,31 @@ export default function CustomInput({ value, title, type = "text", onChange, req
                         }}>
                         <Icon 
                             name={isPasswordVisible ? 'visibility-off' : 'visibility'}
-                            size={20} />
+                            size={20} 
+                            color={colors.text}
+                        />
                     </TouchableOpacity>
                 )}
             </View>
-            <Text>{error} </Text>
+            {error && <Text style={[styles.error, { color: "red" }]}>{error}</Text>}
         </View>
-
     );
 };
 
-const styles = StyleSheet.create(
-    {
-        input: {
-            paddingVertical: 12,
-            fontSize: 18,
-            color: '#000'
-        },
-        inputError: {
-            borderColor: 'red'
-        },
-        error: {
-            color:'red',
-        },
-        inputContainer: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            borderWidth: 1,
-            borderColor: '#ccc',
-            borderRadius: 5,
-            paddingHorizontal: 12,
-            backgroundColor: '#f9f9f9ff'
-        }
+const styles = StyleSheet.create({
+    input: {
+        paddingVertical: 12,
+        fontSize: 18,
+    },
+    error: {
+        marginTop: 4,
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingHorizontal: 12,
+        marginBottom: 10,
     }
-)
+});

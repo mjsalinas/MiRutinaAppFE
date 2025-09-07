@@ -1,53 +1,62 @@
-import { I18n } from "i18n-js";
-import { createContext, useContext, useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { translations } from "../translations/i18n";
+import React, { createContext, useContext, useState } from "react";
 
-type Language = "es" | "en" | "fr";
+type Language = "en" | "es" | "fr";
 
-const i18n = new I18n(translations);
-i18n.defaultLocale = "fr";
-i18n.enableFallback = true;
-
-const LanguageContext = createContext<{
-language: Language,
-changeLanguage: (lng: Language) => void,
-}| null> (null);
-
-export const LanguageProvider = ({children}: {children: React.ReactNode})=> {
-    const [language, setLanguage] = useState<Language>("es");
-
-    useEffect(()=>{
-        const loadLanguage = async () => {
-            const storedLanguage = await AsyncStorage.getItem("language");
-            if (storedLanguage) {
-                setLanguage(storedLanguage as Language);
-                i18n.locale  = storedLanguage;
-            }else if(!i18n.locale) {
-                setLanguage(i18n.defaultLocale as Language);
-                i18n.locale = i18n.defaultLocale;
-            }
-        }
-        loadLanguage();
-    },[])
-
-    const changeLanguage = async (lang: Language) => {
-        setLanguage(lang);
-        i18n.locale = lang;
-        await AsyncStorage.setItem("language", lang);
-    }; 
-
-    return (
-        <LanguageContext.Provider value={{language, changeLanguage}}>
-            {children}
-        </LanguageContext.Provider>
-    )
+interface LanguageContextProps {
+  language: Language;
+  changeLanguage: (lang: Language) => void;
 }
+
+const translations: Record<Language, Record<string, string>> = {
+  en: { 
+    signIn: "Sign in", 
+    signUp: "Sign up", 
+    forgotPassword: "Forgot my password", 
+    welcomeText: "Welcome",
+    invalidEmail: "Invalid email",
+    passwordMustBeStronger: "Password must be stronger"
+  },
+  es: { 
+    signIn: "Iniciar sesión", 
+    signUp: "Registrarse", 
+    forgotPassword: "Olvidé mi contraseña", 
+    welcomeText: "Bienvenido",
+    invalidEmail: "Correo inválido",
+    passwordMustBeStronger: "La contraseña debe ser más fuerte"
+  },
+  fr: { 
+    signIn: "Se connecter", 
+    signUp: "S'inscrire", 
+    forgotPassword: "Mot de passe oublié", 
+    welcomeText: "Bienvenue",
+    invalidEmail: "Email invalide",
+    passwordMustBeStronger: "Le mot de passe doit être plus fort"
+  },
+};
+
+export const i18n = {
+  t: (key: string) => translations["es"][key] ?? key
+};
+
+const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
+
+export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [language, setLanguage] = useState<Language>("es");
+
+  const changeLanguage = (lang: Language) => {
+    setLanguage(lang);
+    i18n.t = (key: string) => translations[lang][key] ?? key;
+  };
+
+  return (
+    <LanguageContext.Provider value={{ language, changeLanguage }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
 
 export const useLanguage = () => {
-    const context = useContext(LanguageContext);
-     if (!context) throw new Error("useLanguage debe usarse dentro de LanguageProvider");
-    return context;
-}
-
-export {i18n}
+  const context = useContext(LanguageContext);
+  if (!context) throw new Error("useLanguage debe usarse dentro de un LanguageProvider");
+  return context;
+};
