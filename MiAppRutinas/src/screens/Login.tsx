@@ -4,12 +4,14 @@ import CustomInput from "../components/CustomInput";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { i18n, useLanguage } from "../contexts/LanguageContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function Login ({navigation}: any) {
 const [email, setEmail] = useState('');
 const [password, setPassword] = useState('');
 
 const {login, isAllowed} = useAuth();
+const { isDark } = useTheme(); // Accede al tema
 
 const handleOnChangeEmail = (email: string) => {
     setEmail(email);
@@ -23,20 +25,27 @@ try {
         Alert.alert('Error', 'Por favor complete todos los campos');
         return;
     }
-    //navegacion de pantallas con envio de parametros de ruta
     login(email);
     navigation.navigate('HomeScreen', {correo: email});
     
-    // navegacion de pantallas sin envio de parametros
-    // navigation.navigate('HomeScreen');
 } catch (error: any){
 
 }
 };
 
+// Estilos dinámicos basados en el tema
+const themeStyles = StyleSheet.create({
+    container: {
+        backgroundColor: isDark ? '#1E1E2C' : '#F5F5F5',
+    },
+    backgroundCard: {
+        backgroundColor: isDark ? '#2c2c42' : '#FFFFFF',
+    },
+});
+
 return(
-        <View style={styles.container}>
-        <View style={styles.backgroundCard}>
+        <View style={[styles.container, themeStyles.container]}>
+        <View style={[styles.backgroundCard, themeStyles.backgroundCard]}>
             <CustomInput 
             type="email" 
             value={email} 
@@ -48,10 +57,6 @@ return(
             title={"Contraseña"} 
             onChange={handleOnChangePassword}/>
             
-            {/* //boton sin traduccion */}
-            {/* <CustomButton title="Iniciar Sesion" */}
-
-            {/* //boton con traduccion automatica */}
              <CustomButton title={i18n.t('signIn')}
             onPress={handleLogin}/>
 
@@ -74,15 +79,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#1E1E2C', // Fondo oscuro moderno
         padding: 20,
     },
     backgroundCard: {
-        backgroundColor: '#FFFFFF', // Fondo blanco para contraste
-        borderRadius: 15, // Bordes más redondeados
+        borderRadius: 15,
         padding: 30,
         width: '85%',
-        shadowColor: '#000', // Sombra para dar profundidad
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 5,

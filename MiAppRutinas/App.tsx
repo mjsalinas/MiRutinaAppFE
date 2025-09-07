@@ -13,15 +13,18 @@ export default function App() {
   return (
     <LanguageProvider>
       <AuthProvider>
-        <NavigationContainer>
+        <ThemeProvider>
+          <NavigationContainer>
+
             <Stack.Navigator initialRouteName='LoginScreen'>
                   <Stack.Screen name='LoginScreen' component={Login} /> 
                   <Stack.Screen name ='HomeScreen' component={Home}/>     
             </Stack.Navigator>
         </NavigationContainer>
-      </AuthProvider>
-    </LanguageProvider>
+      </ThemeProvider>
+    </AuthProvider>
+  </LanguageProvider>
 
   );
 };
-
+import { ThemeProvider } from './src/contexts/ThemeContext';
