@@ -2,6 +2,7 @@ import { useState } from "react";
 import { KeyboardTypeOptions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { i18n } from "../contexts/LanguageContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 type Props = {
     value: string;
@@ -14,6 +15,7 @@ type Props = {
 export default function CustomInput({ value, title, type = "text", onChange, required }: Props) {
     const [isSecureText, setIsSecureText] = useState(type === 'password');
     const [isPasswordVisible, setIsPasswordVisible] = useState (false);
+    const { theme } = useTheme();
 
     const isPasswordField = type==="password";
     const keyboardType: KeyboardTypeOptions = 
@@ -39,10 +41,15 @@ export default function CustomInput({ value, title, type = "text", onChange, req
         <View >
             <View style={[
                 styles.inputContainer,
+                { 
+                    backgroundColor: theme.colors.surface,
+                    borderColor: theme.colors.border 
+                },
                 error && styles.inputError]}>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, { color: theme.colors.text }]}
                     placeholder={title}
+                    placeholderTextColor={theme.colors.textSecondary}
                     value={value}
                     onChangeText={onChange}
                     secureTextEntry={isSecureText}
@@ -56,11 +63,12 @@ export default function CustomInput({ value, title, type = "text", onChange, req
                         }}>
                         <Icon 
                             name={isPasswordVisible ? 'visibility-off' : 'visibility'}
-                            size={20} />
+                            size={20}
+                            color={theme.colors.textSecondary} />
                     </TouchableOpacity>
                 )}
             </View>
-            <Text>{error} </Text>
+            <Text style={{ color: 'red' }}>{error} </Text>
         </View>
 
     );
@@ -69,24 +77,19 @@ export default function CustomInput({ value, title, type = "text", onChange, req
 const styles = StyleSheet.create(
     {
         input: {
+            flex: 1,
             paddingVertical: 12,
             fontSize: 18,
-            color: '#000'
         },
         inputError: {
             borderColor: 'red'
-        },
-        error: {
-            color:'red',
         },
         inputContainer: {
             flexDirection: 'row',
             alignItems: 'center',
             borderWidth: 1,
-            borderColor: '#ccc',
             borderRadius: 5,
             paddingHorizontal: 12,
-            backgroundColor: '#f9f9f9ff'
         }
     }
 )

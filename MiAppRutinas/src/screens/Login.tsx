@@ -4,12 +4,15 @@ import CustomInput from "../components/CustomInput";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { i18n, useLanguage } from "../contexts/LanguageContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function Login ({navigation}: any) {
 const [email, setEmail] = useState('');
 const [password, setPassword] = useState('');
+const [loading, setLoading] = useState(false);
 
-const {login, isAllowed} = useAuth();
+const {login, isAllowed, loading: authLoading} = useAuth();
+const { theme } = useTheme();
 
 const handleOnChangeEmail = (email: string) => {
     setEmail(email);
@@ -17,26 +20,37 @@ const handleOnChangeEmail = (email: string) => {
 const handleOnChangePassword = (pwd: string) => {
     setPassword(pwd);
 } 
-const handleLogin = () => {
+const handleLogin = async () => {
 try {
     if (!email || !password){
         Alert.alert('Error', 'Por favor complete todos los campos');
         return;
     }
-    //navegacion de pantallas con envio de parametros de ruta
-    login(email);
-    navigation.navigate('HomeScreen', {correo: email});
-    
-    // navegacion de pantallas sin envio de parametros
-    // navigation.navigate('HomeScreen');
-} catch (error: any){
 
+    setLoading(true);
+    
+    const result = await login(email, password);
+    
+    if (result.success) {
+        // La navegación se manejará automáticamente por el AuthContext
+        navigation.navigate('HomeScreen');
+    } else {
+        Alert.alert('Error', result.error || 'Error al iniciar sesión');
+    }
+} catch (error: any){
+    Alert.alert('Error', 'Error inesperado al iniciar sesión');
+} finally {
+    setLoading(false);
 }
 };
 
+const goToSignUp = () => {
+    navigation.navigate('SignUpScreen');
+};
+
 return(
-        <View style={styles.container}>
-        <View style={styles.backgroundCard}>
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <View style={[styles.backgroundCard, { backgroundColor: theme.colors.card }]}>
             <CustomInput 
             type="email" 
             value={email} 
@@ -48,20 +62,22 @@ return(
             title={"Contraseña"} 
             onChange={handleOnChangePassword}/>
             
-            {/* //boton sin traduccion */}
-            {/* <CustomButton title="Iniciar Sesion" */}
+            <CustomButton 
+                title={loading ? "Iniciando sesión..." : i18n.t('signIn')}
+                onPress={handleLogin}
+            />
 
-            {/* //boton con traduccion automatica */}
-             <CustomButton title={i18n.t('signIn')}
-            onPress={handleLogin}/>
+            <CustomButton 
+                title={i18n.t('signUp')}
+                onPress={goToSignUp} 
+                variant={'secondary'}
+            />
 
-            <CustomButton title= {i18n.t('signUp')}
-            onPress={()=>{}} 
-            variant={'secondary'}/>
-
-            <CustomButton title={i18n.t('forgotPassword')}
-            onPress={()=>{}} 
-            variant={'tertiary'}/>
+            <CustomButton 
+                title={i18n.t('forgotPassword')}
+                onPress={()=>{}} 
+                variant={'tertiary'}
+            />
 
         </View>
         </View>
@@ -74,15 +90,12 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#1E1E2C', // Fondo oscuro moderno
         padding: 20,
     },
     backgroundCard: {
-        backgroundColor: '#FFFFFF', // Fondo blanco para contraste
-        borderRadius: 15, // Bordes más redondeados
+        borderRadius: 15,
         padding: 30,
         width: '85%',
-        shadowColor: '#000', // Sombra para dar profundidad
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 5,
