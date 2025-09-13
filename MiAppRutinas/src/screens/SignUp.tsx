@@ -3,8 +3,8 @@ import CustomButton from "../components/CustomButton";
 import CustomInput from "../components/CustomInput";
 import { useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
-import { i18n } from "../contexts/LanguageContext";
 import { signUpWithEmail } from "../config/firebase";
+
 
 interface SignUpProps {
   navigation: any;
@@ -145,4 +145,5 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
+
 

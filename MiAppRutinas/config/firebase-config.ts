@@ -1,18 +1,9 @@
-/**
- * 
- * @format
- */
-
-import {AppRegistry} from 'react-native';
-import App from './App';
-import {name as appName} from './app.json';
-
-
+// config/firebase-config.ts
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyATjXQO7fjqWTl_FHl70552XT5_quoz0E4",
+    apiKey: "AIzaSyATjXQO7fjqWTl_FHl70552XT5_quoz0E4",
   authDomain: "aplicacion-55.firebaseapp.com",
   projectId: "aplicacion-55",
   storageBucket: "aplicacion-55.firebasestorage.app",
@@ -25,5 +16,3 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 export { auth };
-
-AppRegistry.registerComponent(appName, () => App);

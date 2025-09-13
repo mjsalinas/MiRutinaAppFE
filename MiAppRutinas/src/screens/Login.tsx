@@ -22,8 +22,16 @@ const handleOnChangePassword = (pwd: string) => {
 } 
 const handleLogin = async () => {
 try {
+    // Validar que los campos no estén vacíos
     if (!email || !password){
         Alert.alert('Error', 'Por favor complete todos los campos');
+        return;
+    }
+
+    // Validar formato básico de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        Alert.alert('Error', 'Por favor ingresa un email válido');
         return;
     }
 
@@ -35,7 +43,8 @@ try {
         // La navegación se manejará automáticamente por el AuthContext
         navigation.navigate('HomeScreen');
     } else {
-        Alert.alert('Error', result.error || 'Error al iniciar sesión');
+        // Mostrar el error específico que viene del servidor
+        Alert.alert('Error de autenticación', result.error || 'Error al iniciar sesión');
     }
 } catch (error: any){
     Alert.alert('Error', 'Error inesperado al iniciar sesión');
